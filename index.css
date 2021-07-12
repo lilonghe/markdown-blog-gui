@@ -1,0 +1,26 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+html, body, #container {
+    height: 100%;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+#root-dir-page {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#root-dir-choose-btn {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: sandybrown;
+    color: #FFF;
+    border-radius: 5px;
+}
