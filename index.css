@@ -2,8 +2,18 @@
     margin: 0;
     padding: 0;
 }
+
+html {
+    font-weight: 300;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
 html, body, #container {
     height: 100%;
+}
+
+:root {
+    --primary-color: sandybrown;
 }
 
 .btn {
@@ -12,7 +22,7 @@ html, body, #container {
 
 #root-dir-page {
     height: 100%;
-    display: flex;
+    /* display: flex; */
     justify-content: center;
     align-items: center;
 }
@@ -20,7 +30,51 @@ html, body, #container {
 #root-dir-choose-btn {
     display: inline-block;
     padding: 15px 40px;
-    background-color: sandybrown;
+    background-color: var(--primary-color);
     color: #FFF;
     border-radius: 5px;
+}
+
+.file-list {
+    width: 240px;
+    height: 100vh;
+    border-right: 1px solid var(--primary-color);
+    overflow: auto;
+}
+
+.file-list li{
+    list-style: none;
+    border-bottom: 1px solid var(--primary-color);
+    padding: 0 15px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    color: var(--primary-color);
+    transition: all .3s;
+    font-size: 14px;
+    position: relative;
+}
+
+.file-list li:hover {
+    background-color: var(--primary-color);
+    color: #FFF;
+}
+
+.file-list li:hover .triangle {
+    border-right-color: #FFF;
+}
+
+.triangle {
+    border: 5px solid transparent;
+    border-right-color: var(--primary-color);
+    position: absolute;
+    right: 10px;
+    top: 15px;
+}
+
+.triangle.right {
+    transform: rotate(180deg);
+}
+.triangle.active {
+    transform: rotate(270deg);
 }

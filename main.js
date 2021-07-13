@@ -1,6 +1,8 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, dialog, ipcMain} = require('electron')
 const path = require('path')
+const Store = require('electron-store');
+const store = new Store();
 
 function createWindow () {
   // Create the browser window.
@@ -9,7 +11,7 @@ function createWindow () {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      preload: path.join(__dirname, 'preload.js')
+      contextIsolation: false,
     }
   })
 
@@ -17,16 +19,21 @@ function createWindow () {
   mainWindow.loadFile('index.html')
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
+
   ipcMain.on('chooseRootDir', function() {
     dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] }).
       then(res=>{
         if (!res.canceled) {
           let path = res.filePaths[0];
-          
+          store.set('rootDir', path);
         }
     });
-  })
+  });
+
+  ipcMain.handle('getStoreValue', (event, key) => {
+    return store.get(key);
+  });
 }
 
 // This method will be called when Electron has finished

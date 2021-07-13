@@ -7,11 +7,24 @@
 </head>
 
 <body>
+  <script src="./libs/vue.global.js"></script>
   <div id="container">
-    <div id="root-dir-page">
+    <div id="root-dir-page" class="page" v-if="!rootDir">
       <a id="root-dir-choose-btn" class="btn">Open File</a>
     </div>
+    <div id="manage-page" class="page" v-if="rootDir">
+      <div>
+        <ul class="file-list">
+          <li v-for="item in fileList" >
+            <span>{{item.fileName}}</span>
+            <span v-if="item.isDir" :class="{triangle: true,  right: true, active:item.openDir}"></span>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
+
+  </script>
   <script src="./renderer.js"></script>
 </body>
 </html>
