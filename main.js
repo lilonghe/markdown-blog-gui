@@ -9,6 +9,8 @@ function createWindow () {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    minWidth: 800,
+    minHeight: 600,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -20,21 +22,16 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
-
   ipcMain.on('chooseRootDir', function(event) {
     dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] }).
       then(res=>{
         if (!res.canceled) {
           let path = res.filePaths[0];
           store.set('rootDir', path);
-
+  
           event.reply("set-root-dir", path);
         }
     });
-  });
-
-  ipcMain.handle('getStoreValue', (event, key) => {
-    return store.get(key);
   });
 }
 
@@ -57,3 +54,7 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
+
+ipcMain.handle('getStoreValue', (event, key) => {
+  return store.get(key);
+});
