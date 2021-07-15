@@ -21,12 +21,14 @@ function createWindow () {
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 
-  ipcMain.on('chooseRootDir', function() {
+  ipcMain.on('chooseRootDir', function(event) {
     dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] }).
       then(res=>{
         if (!res.canceled) {
           let path = res.filePaths[0];
           store.set('rootDir', path);
+
+          event.reply("set-root-dir", path);
         }
     });
   });

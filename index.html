@@ -2,24 +2,39 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Mardown blog GUI</title>
+  <title>Mardown Blog GUI</title>
   <link type="text/css" rel="stylesheet" href="./index.css" />
 </head>
 
 <body>
-  <script src="./libs/vue.global.js"></script>
   <div id="container">
-    <div id="root-dir-page" class="page" v-if="!rootDir">
-      <a id="root-dir-choose-btn" class="btn">Open File</a>
+    
+    <div id="root-dir-page" class="page" v-if="(!rootDir && inited) || (rootDir && !fileList.length && inited)">
+      <a id="root-dir-choose-btn" class="btn" @click="chooseRootDir">Open Directory</a>
     </div>
-    <div id="manage-page" class="page" v-if="rootDir">
-      <div>
-        <ul class="file-list">
-          <li v-for="item in fileList" >
-            <span>{{item.fileName}}</span>
-            <span v-if="item.isDir" :class="{triangle: true,  right: true, active:item.openDir}"></span>
-          </li>
+    <div id="manage-page" class="page" v-if="rootDir && fileList.length">
+      <ul class="file-list">
+        <li v-for="item in fileList" @click="selectFile(item)" :class="{active: targetFile?.filePath === item.filePath}">
+          <span>{{item.meta.title || item.fileName}}</span>
+          <span v-if="item.isDir" :class="{triangle: true,  right: true, active:item.openDir}"></span>
+        </li>
+      </ul>
+      <div class="file-detail" v-if="targetFile">
+        <h1 class="file-title">{{targetFile.meta.title || targetFile.fileName}}</h1>
+        <div class="file-meta">
+          <small>{{$filters.formatDate(targetFile.meta.date)}}</small>
+          <small v-if="targetFile.meta.lastmod"> / {{$filters.formatDate(targetFile.meta.lastmod)}}</small>
+        </div>
+        <ul class="file-categories" v-if="targetFile.meta.categories">
+          <li v-for="cate in targetFile.meta.categories">{{cate}}</li>
         </ul>
+        <ul class="file-tags" v-if="targetFile.meta.tags">
+          <li v-for="tag in targetFile.meta.tags">#{{tag}}</li>
+        </ul>
+        <div class="file-content"><pre>{{targetFile.content}}</pre></div>
+      </div>
+      <div class="no-file-selected" v-if="!targetFile">
+        No file selected.
       </div>
     </div>
   </div>

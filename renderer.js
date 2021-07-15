@@ -1,7 +1,22 @@
-const { ipcRenderer, dialog, remote } = require('electron')
+const { ipcRenderer } = require('electron')
+const yaml = require('js-yaml');
+const fs   = require('fs');
+const path = require('path');
+const { readdir, readFile } = require('fs/promises');
+const dayjs = require('dayjs');
+const Vue = require('vue');
 
 window.addEventListener('load', async () => {
-    const app = Vue.createApp(AppInstance).mount('#container');
+    const app = Vue.createApp(AppInstance)
+    app.config.globalProperties.$filters = {
+        formatDate(value, fmt='YYYY-MM-DD hh:mm:ss') {
+            if (value) {
+                return dayjs(String(value)).format(fmt)
+            }
+            return value
+        }
+    }
+    app.mount('#container');
 });
 
 const AppInstance = {
@@ -9,6 +24,8 @@ const AppInstance = {
         return {
             rootDir: undefined,
             fileList: [],
+            targetFile: undefined,
+            inited: false,
         }
     },
     async mounted() {
@@ -17,36 +34,57 @@ const AppInstance = {
             this.rootDir = rootDir;
             this.readDir(rootDir);
         }
+        ipcRenderer.on("set-root-dir",(event,args)=>{
+            console.log(args)
+            this.rootDir = args;
+            this.readDir(args);
+        });
+        this.inited = true;
     },
     methods: {
-        chooseRootDie() {
+        chooseRootDir() {
             ipcRenderer.send('chooseRootDir');
         },
         async readDir(rootDir) {
-            const fs = require('fs');
-            const { readdir } = require('fs/promises');
-            const path = require('path');
             let list = [];
             try {
                 const files = await readdir(rootDir);
+                if(!files.length) {
+                    alert('Nil Directory');
+                }
+
                 for await (const fileName of files) {
                     const filePath = path.join(rootDir, fileName);
                     const stat = fs.statSync(filePath);
                     let fileInfo = { fileName, filePath };
-                    console.log(stat);
                     if (stat.isFile()) {
                         if (path.extname(fileName).toLowerCase() === '.md') {
                             fileInfo.size = stat.size;
+
+                            const fileContent = await readFile(fileInfo.filePath, { encoding: 'utf8' });
+                            if (fileContent.indexOf('---\n') === 0) {
+                                let [_, metaStr, content] = fileContent.split('---\n');
+                                let metaInfo = yaml.load(metaStr)
+                                fileInfo.meta = metaInfo;
+                                fileInfo.content = content;
+                            }
                         }
                     } else {
                         fileInfo.isDir = true;
+                        fileInfo.meta = {
+                            date: new Date(),
+                        }
                     }
                     list.push(fileInfo)
                 }
+                list = list.sort((a,b) => b.meta.date - a.meta.date);
                 this.fileList = list;
             } catch (err) {
                 console.error(err);
             }
+        },
+        selectFile(file) {
+            this.targetFile = file;
         }
     }
 }
