@@ -2,15 +2,14 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Mardown Blog GUI</title>
+  <title>Markdown Blog GUI</title>
   <link type="text/css" rel="stylesheet" href="./index.css" />
   <link rel="shortcut icon" type="images/png" href="./icon.png" />
 </head>
 
 <body>
-  <div id="container">
-    
-    <div id="root-dir-page" class="page" v-if="(!rootDir && inited) || (rootDir && !fileList.length && inited)">
+  <div id="container" v-cloak>
+    <div id="root-dir-page" class="page" v-if="!rootDir && inited">
       <a id="root-dir-choose-btn" class="btn" @click="chooseRootDir">Open Directory</a>
     </div>
     <div id="manage-page" class="page" v-if="rootDir && fileList.length">

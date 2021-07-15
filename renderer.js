@@ -32,10 +32,10 @@ const AppInstance = {
         const rootDir = await ipcRenderer.invoke('getStoreValue', 'rootDir');
         if (rootDir) {
             this.rootDir = rootDir;
-            this.readDir(rootDir);
+            await this.readDir(rootDir);
+            
         }
         ipcRenderer.on("set-root-dir",(event,args)=>{
-            console.log(args)
             this.rootDir = args;
             this.readDir(args);
         });
@@ -70,10 +70,11 @@ const AppInstance = {
                             }
                         }
                     } else {
-                        fileInfo.isDir = true;
-                        fileInfo.meta = {
-                            date: new Date(),
-                        }
+                        // 下个版本再放出来
+                        // fileInfo.isDir = true;
+                        // fileInfo.meta = {
+                        //     date: new Date(),
+                        // }
                     }
                     list.push(fileInfo)
                 }
