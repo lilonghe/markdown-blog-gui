@@ -2,8 +2,17 @@
   "name": "markdown-blog-gui",
   "version": "1.0.0",
   "main": "main.js",
+  "author": {
+    "name": "lilonghe",
+    "email": "lilonghe@outlook.com",
+    "url": "https://github.com/lilonghe"
+  },
+  "repository": {
+    "url": "https://github.com/lilonghe/markdown-blog-gui"
+  },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
   },
   "keywords": [
     "hugo",
@@ -11,7 +20,8 @@
     "blog"
   ],
   "devDependencies": {
-    "electron": "^13.1.6"
+    "electron": "^13.1.6",
+    "electron-builder": "^22.11.7"
   },
   "dependencies": {
     "dayjs": "^1.10.6",
