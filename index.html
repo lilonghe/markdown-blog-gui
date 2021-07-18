@@ -15,15 +15,18 @@
     <div id="manage-page" class="page" v-if="rootDir && fileList.length">
       <ul class="file-list">
         <li v-for="item in fileList" @click="selectFile(item)" :class="{active: targetFile?.filePath === item.filePath}">
-          <span>{{item.meta.title || item.fileName}}</span>
+          <span>{{item.displayTitle}}</span>
           <span v-if="item.isDir" :class="{triangle: true,  right: true, active:item.openDir}"></span>
         </li>
       </ul>
       <div class="file-detail" v-if="targetFile">
-        <h1 class="file-title">{{targetFile.meta.title || targetFile.fileName}}</h1>
+        <h1 class="file-title">{{targetFile.displayTitle}} <small v-if="targetFile.meta.url != targetFile.displayTitle">{{targetFile.meta.url}}</small></h1>
         <div class="file-meta">
           <small>{{$filters.formatDate(targetFile.meta.date)}}</small>
           <small v-if="targetFile.meta.lastmod"> / {{$filters.formatDate(targetFile.meta.lastmod)}}</small>
+          <div class="file-common-meta">
+            <p v-for="item in targetFile.commonMeta">{{item.key}}: {{item.value}}</p>
+          </div>
         </div>
         <ul class="file-categories" v-if="targetFile.meta.categories">
           <li v-for="cate in targetFile.meta.categories">{{cate}}</li>

@@ -6,6 +6,8 @@ const { readdir, readFile } = require('fs/promises');
 const dayjs = require('dayjs');
 const Vue = require('vue');
 
+const defintionMetaKeys = ['date', 'lastmod', 'categories', 'tags', 'title', 'url'];
+
 window.addEventListener('load', async () => {
     const app = Vue.createApp(AppInstance)
     app.config.globalProperties.$filters = {
@@ -67,9 +69,24 @@ const AppInstance = {
                                 let metaInfo = yaml.load(metaStr)
                                 fileInfo.meta = metaInfo;
                                 fileInfo.content = content;
-                            }
 
-                            list.push(fileInfo)
+                                let commonMeta = [];
+                                Object.keys(metaInfo).filter(key=>!defintionMetaKeys.includes(key)).map(key=>{
+                                    commonMeta.push({
+                                        key,
+                                        value: metaInfo[key].toString(),
+                                    });
+                                })
+                                fileInfo.commonMeta = commonMeta;
+
+                                if (!fileInfo.meta.url) {
+                                    fileInfo.meta.url = path.basename(fileInfo.fileName, '.md');
+                                }
+
+                                fileInfo.displayTitle = fileInfo.meta.title || fileInfo.meta.url;
+
+                                list.push(fileInfo)
+                            }
                         }
                     } else {
                         // 下个版本再放出来
