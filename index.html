@@ -13,12 +13,17 @@
       <a id="root-dir-choose-btn" class="btn" @click="chooseRootDir">Open Directory</a>
     </div>
     <div id="manage-page" class="page" v-if="rootDir && fileList.length">
-      <ul class="file-list">
-        <li v-for="item in fileList" @click="selectFile(item)" :class="{active: targetFile?.filePath === item.filePath}">
-          <span>{{item.displayTitle}}</span>
-          <span v-if="item.isDir" :class="{triangle: true,  right: true, active:item.openDir}"></span>
-        </li>
-      </ul>
+      <div class="left-panel">
+        <div class="left-panel-actions">
+          <input class='file-filter' v-model="filter" placeholder="Search"/>
+        </div>
+        <ul class="file-list">
+          <li v-for="item in filterFileList" @click="selectFile(item)" :class="{active: targetFile?.filePath === item.filePath}">
+            <span>{{item.displayTitle}}</span>
+            <span v-if="item.isDir" :class="{triangle: true,  right: true, active:item.openDir}"></span>
+          </li>
+        </ul>
+      </div>
       <div class="file-detail" v-if="targetFile">
         <h1 class="file-title">{{targetFile.displayTitle}} <small v-if="targetFile.meta.url != targetFile.displayTitle">{{targetFile.meta.url}}</small></h1>
         <div class="file-meta">

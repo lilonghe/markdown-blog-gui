@@ -47,10 +47,9 @@ html, body, #container {
 }
 
 .file-list {
-    width: 240px;
-    height: 100vh;
     border-right: 1px solid var(--primary-color);
     overflow: auto;
+    flex: 1;
 }
 
 .file-list li{
@@ -164,4 +163,31 @@ html, body, #container {
 .file-common-meta {
     margin-top: 10px;
     font-size: 12px;
+}
+
+.left-panel {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+}
+
+.left-panel-actions {
+    border: 1px solid var(--primary-color);
+    border-left: none;
+    border-top: none;
+}
+
+.file-filter {
+    width: 100%;
+    outline:none;
+    border: none;
+    font-size: 16px;
+    padding: 8px 15px;
+    color: #aab2bd;
+    font-weight: 300;
+}
+
+input::-webkit-input-placeholder {
+     color: #aab2bd;
 }

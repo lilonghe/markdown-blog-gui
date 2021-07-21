@@ -28,6 +28,21 @@ const AppInstance = {
             fileList: [],
             targetFile: undefined,
             inited: false,
+            filter: undefined,
+        }
+    },
+    computed: {
+        filterFileList() {
+            if (!this.filter) {
+                return this.fileList;
+            }
+            return this.fileList.filter(file=>{
+                if (file.displayTitle.toLowerCase().includes(this.filter.toLowerCase()) || 
+                    file.meta.url.toLowerCase().includes(this.filter.toLowerCase())) {
+                    return true;
+                }
+                return false;
+            })
         }
     },
     async mounted() {
