@@ -13,6 +13,4 @@ Manage with yaml meta markdown file.
 不打算支持编辑功能，因为市面上太多编辑器了，做好自己就足够了。
 
 # Demo
-![demo3](./demo/3.png)  
 ![demo1](./demo/1.png)  
-![demo2](./demo/2.png)
