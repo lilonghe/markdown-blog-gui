@@ -7,6 +7,8 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "dayjs": "^1.10.7",
+    "js-yaml": "^4.1.0",
     "vue": "^3.2.16"
   },
   "devDependencies": {

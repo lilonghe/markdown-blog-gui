@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import yaml from 'js-yaml';
+import dayjs from 'dayjs';
+
+const defintionMetaKeys = ['date', 'lastmod', 'categories', 'tags', 'title', 'url'];
 
 let fileList = ref([]);
 const targetFile = ref();
@@ -27,11 +31,57 @@ async function selectPath() {
   let dirHandle = await window.showDirectoryPicker();
   let files = await getFiles(dirHandle);
   fileList.value = files;
-  console.log(fileList);
+}
+
+interface FileItem {
+  meta: Object,
+  content: string,
+  commonMeta: Object[],
+  displayTitle: string,
+  fileName: string,
+}
+
+const getFileInfo = async (fileHandle: FileSystemFileHandle) => {
+  const rawFile = await fileHandle.getFile();
+  const fileContent = await rawFile.text();
+  let fileInfo: FileItem = {
+    fileName: rawFile.name,
+  };
+  if (fileContent.indexOf('---\n') === 0) {
+      let [_, metaStr, content] = fileContent.split('---\n');
+      let metaInfo = yaml.load(metaStr)
+      fileInfo.meta = metaInfo;
+      fileInfo.content = content;
+
+      let commonMeta:Object[] = [];
+      Object.keys(metaInfo).filter(key=>!defintionMetaKeys.includes(key)).map(key=>{
+          commonMeta.push({
+              key,
+              value: metaInfo[key].toString(),
+          });
+      })
+      fileInfo.commonMeta = commonMeta;
+
+      if (!fileInfo.meta.url) {
+          fileInfo.meta.url = fileInfo.fileName.substr(0, fileInfo.fileName.lastIndexOf('.md'));
+      }
+
+      fileInfo.displayTitle = fileInfo.meta.title || fileInfo.meta.url;
+  }
+  return fileInfo;
+}
+
+const formatDate = (value: string, fmt='YYYY-MM-DD hh:mm:ss') => {
+    if (value) {
+        return dayjs(String(value)).format(fmt)
+    }
+    return value
 }
 
 async function selectFile(file) {
-  console.log(await file.fileHandle.getFile());
+  const fileInfo = await getFileInfo(file.fileHandle);
+  targetFile.value = fileInfo;
+  console.log(fileInfo);
 }
 </script>
 
@@ -42,15 +92,36 @@ async function selectFile(file) {
   <div v-if="fileList.length > 0" class="page-browser">
     <div class="left-panel">
       <ul class="file-list">
-        <li v-bind:key="item" v-for="item in fileList.filter(item => item.kind !== 'directory')">
+        <li 
+          v-bind:key="item" 
+          v-for="item in fileList.filter(item => item.kind !== 'directory')"
+          :class="{active: targetFile?.fileName === item.name}"
+          @click="selectFile(item)">
           <!-- <span v-if="item.kind === 'directory'" class="menu-folder">{{item.name}}</span> -->
-          <span 
-            @click="selectFile(item)"
-            v-if="item.kind === 'file'" class="menu-file">{{item.name}}</span>
+          <span  v-if="item.kind === 'file'" class="menu-file">{{item.name}}</span>
         </li>
       </ul>
     </div>
-    <div class="file-detail"></div>
+    <div class="file-detail" v-if="targetFile">
+        <h1 class="file-title">{{targetFile.displayTitle}} <small v-if="targetFile.meta.url != targetFile.displayTitle">{{targetFile.meta.url}}</small></h1>
+        <div class="file-meta">
+          <small>{{formatDate(targetFile.meta.date)}}</small>
+          <small v-if="targetFile.meta.lastmod"> / {{formatDate(targetFile.meta.lastmod)}}</small>
+          <div class="file-common-meta">
+            <p v-for="item in targetFile.commonMeta">{{item.key}}: {{item.value}}</p>
+          </div>
+        </div>
+        <ul class="file-categories" v-if="targetFile.meta.categories">
+          <li v-for="cate in targetFile.meta.categories">{{cate}}</li>
+        </ul>
+        <ul class="file-tags" v-if="targetFile.meta.tags">
+          <li v-for="tag in targetFile.meta.tags">#{{tag}}</li>
+        </ul>
+        <div class="file-content"><pre>{{targetFile.content}}</pre></div>
+      </div>
+      <div class="no-file-selected" v-if="!targetFile">
+        No file selected.
+      </div>
   </div>
 </template>
 
