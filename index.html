@@ -1,53 +1,13 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Markdown Blog GUI</title>
-  <link type="text/css" rel="stylesheet" href="./index.css" />
-  <link rel="shortcut icon" type="images/png" href="./icon.png" />
-</head>
-
-<body>
-  <div id="container" v-cloak>
-    <div id="root-dir-page" class="page" v-if="!rootDir && inited">
-      <a id="root-dir-choose-btn" class="btn" @click="chooseRootDir">Open Directory</a>
-    </div>
-    <div id="manage-page" class="page" v-if="rootDir && fileList.length">
-      <div class="left-panel">
-        <div class="left-panel-actions">
-          <input class='file-filter' v-model="filter" placeholder="Search"/>
-        </div>
-        <ul class="file-list">
-          <li v-for="item in filterFileList" @click="selectFile(item)" :class="{active: targetFile?.filePath === item.filePath}">
-            <span>{{item.displayTitle}}</span>
-            <span v-if="item.isDir" :class="{triangle: true,  right: true, active:item.openDir}"></span>
-          </li>
-        </ul>
-      </div>
-      <div class="file-detail" v-if="targetFile">
-        <h1 class="file-title">{{targetFile.displayTitle}} <small v-if="targetFile.meta.url != targetFile.displayTitle">{{targetFile.meta.url}}</small></h1>
-        <div class="file-meta">
-          <small>{{$filters.formatDate(targetFile.meta.date)}}</small>
-          <small v-if="targetFile.meta.lastmod"> / {{$filters.formatDate(targetFile.meta.lastmod)}}</small>
-          <div class="file-common-meta">
-            <p v-for="item in targetFile.commonMeta">{{item.key}}: {{item.value}}</p>
-          </div>
-        </div>
-        <ul class="file-categories" v-if="targetFile.meta.categories">
-          <li v-for="cate in targetFile.meta.categories">{{cate}}</li>
-        </ul>
-        <ul class="file-tags" v-if="targetFile.meta.tags">
-          <li v-for="tag in targetFile.meta.tags">#{{tag}}</li>
-        </ul>
-        <div class="file-content"><pre>{{targetFile.content}}</pre></div>
-      </div>
-      <div class="no-file-selected" v-if="!targetFile">
-        No file selected.
-      </div>
-    </div>
-  </div>
-
-  </script>
-  <script src="./renderer.js"></script>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Markdown Manger</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

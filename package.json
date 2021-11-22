@@ -1,34 +1,18 @@
 {
-  "name": "markdown-blog-gui",
-  "version": "1.0.0",
-  "main": "main.js",
-  "author": {
-    "name": "lilonghe",
-    "email": "lilonghe@outlook.com",
-    "url": "https://github.com/lilonghe"
-  },
-  "repository": {
-    "url": "https://github.com/lilonghe/markdown-blog-gui"
-  },
+  "name": "markdown-blog-manager",
+  "version": "0.0.0",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder",
-    "build:win": "electron-builder --win",
-    "build:mac": "electron-builder --mac"
-  },
-  "keywords": [
-    "hugo",
-    "markdown",
-    "blog"
-  ],
-  "devDependencies": {
-    "electron": "^13.1.6",
-    "electron-builder": "^22.11.7"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview"
   },
   "dependencies": {
-    "dayjs": "^1.10.6",
-    "electron-store": "^8.0.0",
-    "js-yaml": "^4.1.0",
-    "vue": "^3.1.4"
+    "vue": "^3.2.16"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.9.3",
+    "typescript": "^4.4.3",
+    "vite": "^2.6.4",
+    "vue-tsc": "^0.3.0"
   }
 }
