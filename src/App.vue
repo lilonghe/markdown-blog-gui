@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { Ref, ref } from 'vue';
 import yaml from 'js-yaml';
 import dayjs from 'dayjs';
 
 const defintionMetaKeys = ['date', 'lastmod', 'categories', 'tags', 'title', 'url'];
 
-let fileList = ref([]);
+let fileList: Ref<IListFile[]> = ref([]);
 const targetFile = ref();
+
+interface IListFile {
+  kind: string;
+  name: string;
+  fileHandle: FileSystemDirectoryHandle | FileSystemFileHandle;
+  children: IListFile[];
+}
 
 async function getFiles(dirHandle: FileSystemDirectoryHandle) {
   const files = dirHandle.values();
   const list = [];
   for await (let item of files) {
-    let obj = {
+    let obj: IListFile = {
       kind: item.kind,
       name: item.name,
     }
@@ -34,11 +41,11 @@ async function selectPath() {
 }
 
 interface FileItem {
-  meta: Object,
-  content: string,
-  commonMeta: Object[],
-  displayTitle: string,
-  fileName: string,
+  meta: any;
+  content: string;
+  commonMeta: object[];
+  displayTitle: string;
+  fileName: string;
 }
 
 const getFileInfo = async (fileHandle: FileSystemFileHandle) => {
@@ -78,7 +85,7 @@ const formatDate = (value: string, fmt='YYYY-MM-DD hh:mm:ss') => {
     return value
 }
 
-async function selectFile(file) {
+async function selectFile(file: IListFile) {
   const fileInfo = await getFileInfo(file.fileHandle);
   targetFile.value = fileInfo;
   console.log(fileInfo);
