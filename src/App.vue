@@ -15,6 +15,14 @@ interface IListFile {
   children: IListFile[];
 }
 
+interface IFileItem {
+  meta: any;
+  content: string;
+  commonMeta: object[];
+  displayTitle: string;
+  fileName: string;
+}
+
 async function getFiles(dirHandle: FileSystemDirectoryHandle) {
   const files = dirHandle.values();
   const list = [];
@@ -24,7 +32,7 @@ async function getFiles(dirHandle: FileSystemDirectoryHandle) {
       name: item.name,
     }
     if (item.kind === 'directory') {
-      obj.children = await getFiles(item);
+      obj.children = await getFiles(item as FileSystemDirectoryHandle);
     } else {
       obj.fileHandle = item;
     }
@@ -40,23 +48,15 @@ async function selectPath() {
   fileList.value = files;
 }
 
-interface FileItem {
-  meta: any;
-  content: string;
-  commonMeta: object[];
-  displayTitle: string;
-  fileName: string;
-}
-
 const getFileInfo = async (fileHandle: FileSystemFileHandle) => {
   const rawFile = await fileHandle.getFile();
   const fileContent = await rawFile.text();
-  let fileInfo: FileItem = {
+  let fileInfo: IFileItem = {
     fileName: rawFile.name,
   };
   if (fileContent.indexOf('---\n') === 0) {
       let [_, metaStr, content] = fileContent.split('---\n');
-      let metaInfo = yaml.load(metaStr)
+      let metaInfo = yaml.load(metaStr) as any;
       fileInfo.meta = metaInfo;
       fileInfo.content = content;
 
@@ -86,7 +86,7 @@ const formatDate = (value: string, fmt='YYYY-MM-DD hh:mm:ss') => {
 }
 
 async function selectFile(file: IListFile) {
-  const fileInfo = await getFileInfo(file.fileHandle);
+  const fileInfo = await getFileInfo(file.fileHandle as FileSystemFileHandle);
   targetFile.value = fileInfo;
   console.log(fileInfo);
 }
